@@ -72,6 +72,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotor flywheel = null;
     private DcMotor intake = null;
+    private boolean flywheelEnabled = false;
+    private boolean intakeEnabled = false;
 
     @Override
     public void runOpMode() {
@@ -85,8 +87,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
 
-        boolean flywheelEnabled = false;
-        boolean intakeEnabled = false;
+
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -141,18 +142,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             } else {
                 flywheelPower = 0.0;
             }
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-            max = Math.max(max, Math.abs(backLeftPower));
-            max = Math.max(max, Math.abs(backRightPower));
 
-            if (max > 1.0) {
-                frontLeftPower  /= max;
-                frontRightPower /= max;
-                backLeftPower   /= max;
-                backRightPower  /= max;
-            }
 
             // This is test code:
             //
