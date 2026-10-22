@@ -70,6 +70,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
+    private DcMotor flywheel = null;
+    private DcMotor intake = null;
 
     @Override
     public void runOpMode() {
@@ -80,7 +82,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "BL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "FR");
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
+        flywheel = hardwareMap.get(DcMotor.class, "F");
+        intake = hardwareMap.get(DcMotor.class, "I");
 
+        boolean flywheelEnabled = false;
+        boolean intakeEnabled = false;
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -119,6 +125,22 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double backLeftPower   = axial - lateral + yaw;
             double backRightPower  = axial + lateral - yaw;
 
+
+            double flywheelPower = 0;
+            double intakePower = 0;
+
+            if (gamepad1.left_bumper){intakeEnabled = !intakeEnabled;}
+            if (gamepad1.right_bumper){flywheelEnabled = !flywheelEnabled;}
+            if (intakeEnabled) {
+                intakePower = Constants.INTAKE_POWER;
+            } else {
+                intakePower = 0.0;
+            }
+            if (flywheelEnabled) {
+                flywheelPower = Constants.FLYWHEEL_POWER;
+            } else {
+                flywheelPower = 0.0;
+            }
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
@@ -150,14 +172,18 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             
 
-            // Send calculated power to wheels
+            // Send calculated power to motors
             frontLeftDrive.setPower(frontLeftPower);
             frontRightDrive.setPower(frontRightPower);
             backLeftDrive.setPower(backLeftPower);
             backRightDrive.setPower(backRightPower);
+            intake.setPower(intakePower);
+            flywheel.setPower(flywheelPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Intake Enabled", intakeEnabled);
+            telemetry.addData("Flywheel Enabled", flywheelEnabled);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.update();
