@@ -129,8 +129,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double flywheelPower = 0;
             double intakePower = 0;
 
-            if (gamepad1.left_bumper){intakeEnabled = !intakeEnabled;}
-            if (gamepad1.right_bumper){flywheelEnabled = !flywheelEnabled;}
+            if (gamepad1.leftBumperWasPressed()){intakeEnabled = !intakeEnabled;}
+            if (gamepad1.rightBumperWasPressed()){flywheelEnabled = !flywheelEnabled;}
             if (intakeEnabled) {
                 intakePower = Constants.INTAKE_POWER;
             } else {
