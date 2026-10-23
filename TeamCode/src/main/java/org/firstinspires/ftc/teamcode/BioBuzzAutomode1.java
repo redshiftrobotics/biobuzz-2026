@@ -63,7 +63,7 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         intake.setPower(intakePower);
         flywheel.setPower(flywheelPower);
 
-        autoDrive(1000, -1, 0, 0);
+        autoDrive(500, 0.25, 0, 0);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -75,7 +75,7 @@ public class BioBuzzAutomode1 extends LinearOpMode {
     public void autoDrive(int time, double speed_x, double speed_y, double angle) {
         double max;
 
-        double axial   = speed_y;  // Note: pushing stick forward gives negative value
+        double axial   = speed_y;
         double lateral =  speed_x;
         double yaw     =  angle;
 
