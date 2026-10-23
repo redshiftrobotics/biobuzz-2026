@@ -50,6 +50,16 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         double flywheelPower = 0;
         double intakePower = 0;
 
+
+        // Wait for the game to start (driver presses START)
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        waitForStart();
+        runtime.reset();
+
+
+
         if (intakeEnabled) {
             intakePower = Constants.INTAKE_POWER;
         } else {
@@ -65,12 +75,6 @@ public class BioBuzzAutomode1 extends LinearOpMode {
 
         autoDrive(500, 0.25, 0, 0);
 
-        // Wait for the game to start (driver presses START)
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        waitForStart();
-        runtime.reset();
     }
     public void autoDrive(int time, double speed_x, double speed_y, double angle) {
         double max;
@@ -78,7 +82,6 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         double axial   = speed_y;
         double lateral =  speed_x;
         double yaw     =  angle;
-
 
 
         double frontLeftPower  = axial + lateral + yaw;
