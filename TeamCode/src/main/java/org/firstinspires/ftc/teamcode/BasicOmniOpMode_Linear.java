@@ -77,6 +77,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private CRServo rightStopper = null;
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
+    private boolean firing = false;
 
     @Override
     public void runOpMode() {
@@ -183,4 +184,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.update();
         }
-    }}
+    }
+    public void fire() {
+        firing = true;
+        rightStopper.setPower(-1);
+        leftStopper.setPower(1);
+        sleep(Constants.STOPPER_DELAY);
+        leftStopper.setPower(-1);
+        rightStopper.setPower(1);
+        firing = false;
+    }
+}
+
