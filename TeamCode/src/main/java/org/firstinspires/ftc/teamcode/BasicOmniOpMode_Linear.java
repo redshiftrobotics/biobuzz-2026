@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights r
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -72,6 +73,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotor flywheel = null;
     private DcMotor intake = null;
+    private CRServo leftStopper = null;
+    private CRServo rightStopper = null;
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
 
@@ -86,6 +89,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
+        rightStopper = hardwareMap.get(CRServo.class, "RS");
+        leftStopper = hardwareMap.get(CRServo.class, "LS");
 
 
         // ########################################################################################
