@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights r
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -72,6 +73,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotor flywheel = null;
     private DcMotor intake = null;
+    private CRServo leftStopper = null;
+    private CRServo rightStopper = null;
+    private boolean flywheelEnabled = false;
+    private boolean intakeEnabled = false;
+    private boolean firing = false;
 
     @Override
     public void runOpMode() {
@@ -84,9 +90,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
+        rightStopper = hardwareMap.get(CRServo.class, "RS");
+        leftStopper = hardwareMap.get(CRServo.class, "LS");
 
-        boolean flywheelEnabled = false;
-        boolean intakeEnabled = false;
+
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -116,7 +123,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double yaw     =  gamepad1.right_stick_x * 0.5;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -141,18 +148,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             } else {
                 flywheelPower = 0.0;
             }
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-            max = Math.max(max, Math.abs(backLeftPower));
-            max = Math.max(max, Math.abs(backRightPower));
 
-            if (max > 1.0) {
-                frontLeftPower  /= max;
-                frontRightPower /= max;
-                backLeftPower   /= max;
-                backRightPower  /= max;
-            }
 
             // This is test code:
             //
@@ -188,4 +184,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
             telemetry.update();
         }
-    }}
+    }
+    public void fire() {
+        firing = true;
+        rightStopper.setPower(-1);
+        leftStopper.setPower(1);
+        sleep(Constants.STOPPER_DELAY);
+        leftStopper.setPower(-1);
+        rightStopper.setPower(1);
+        firing = false;
+    }
+}
+

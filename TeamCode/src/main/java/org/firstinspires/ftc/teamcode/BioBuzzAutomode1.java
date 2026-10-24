@@ -3,28 +3,21 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@Autonomous(name="Move Auto", group="Simple Autos")
 public class BioBuzzAutomode1 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    private DcMotor flywheel = null;
+    private DcMotor intake = null;
+    private boolean flywheelEnabled = false;
+    private boolean intakeEnabled = false;
 
     @Override
     public void runOpMode() {
@@ -35,6 +28,8 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "BL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "FR");
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
+        flywheel = hardwareMap.get(DcMotor.class, "F");
+        intake = hardwareMap.get(DcMotor.class, "I");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -51,69 +46,72 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+
+        double flywheelPower = 0;
+        double intakePower = 0;
+
+
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
         runtime.reset();
-        XDriveForward(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
 
-        sleep(250);
+
+
+        if (intakeEnabled) {
+            intakePower = Constants.INTAKE_POWER;
+        } else {
+            intakePower = 0.0;
+        }
+        if (flywheelEnabled) {
+            flywheelPower = Constants.FLYWHEEL_POWER;
+        } else {
+            flywheelPower = 0.0;
+        }
+        intake.setPower(intakePower);
+        flywheel.setPower(flywheelPower);
+
+        autoDrive(500, 0.25, 0, 0);
+
     }
+    public void autoDrive(int time, double speed_x, double speed_y, double angle) {
+        double max;
 
-        public void XDriveForward(double speed,
-                                  double leftInches, double rightInches,
-                                  double timeoutS) {
-            int newLeftTarget;
-            int newRightTarget;
-
-            // Ensure that the OpMode is still active
-            if (opModeIsActive()) {
-
-                // Determine new target position, and pass to motor controller
-                newLeftTarget = frontLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-                newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-                frontLeftDrive.setTargetPosition(newLeftTarget);
-                backRightDrive.setTargetPosition(newRightTarget);
-
-                // Turn On RUN_TO_POSITION
-                frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // reset the timeout time and start motion.
-                runtime.reset();
-                frontLeftDrive.setPower(Math.abs(speed));
-                backRightDrive.setPower(Math.abs(speed));
-
-                // keep looping while we are still active, and there is time left, and both motors are running.
-                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-                // its target position, the motion will stop.  This is "safer" in the event that the robot will
-                // always end the motion as soon as possible.
-                // However, if you require that BOTH motors have finished their moves before the robot continues
-                // onto the next step, use (isBusy() || isBusy()) in the loop test.
-                while (opModeIsActive() &&
-                        (runtime.seconds() < timeoutS) &&
-                        (frontLeftDrive.isBusy() && backRightDrive.isBusy())) {
-
-                    // Display it for the driver.
-                    telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
-                    telemetry.addData("Currently at",  " at %7d :%7d",
-                            frontLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
-                    telemetry.update();
-                }
-
-                // Stop all motion;
-                frontLeftDrive.setPower(0);
-                backRightDrive.setPower(0);
-
-                // Turn off RUN_TO_POSITION
-                frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                sleep(250);   // optional pause after each move.
-
-        }}}
+        double axial   = speed_y;
+        double lateral =  speed_x;
+        double yaw     =  angle;
 
 
+        double frontLeftPower  = axial + lateral + yaw;
+        double frontRightPower = axial - lateral - yaw;
+        double backLeftPower   = axial - lateral + yaw;
+        double backRightPower  = axial + lateral - yaw;
 
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        max = Math.max(max, Math.abs(backLeftPower));
+        max = Math.max(max, Math.abs(backRightPower));
+
+        if (max > 1.0) {
+            frontLeftPower  /= max;
+            frontRightPower /= max;
+            backLeftPower   /= max;
+            backRightPower  /= max;
+        }
+
+        frontLeftDrive.setPower(frontLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backLeftDrive.setPower(backLeftPower);
+        backRightDrive.setPower(backRightPower);
+        sleep(time);
+        frontLeftDrive.setPower(0.0);
+        frontRightDrive.setPower(0.0);
+        backLeftDrive.setPower(0.0);
+        backRightDrive.setPower(0.0);
+
+    }
+}
