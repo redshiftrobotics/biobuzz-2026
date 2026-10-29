@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,6 +19,9 @@ public class BioBuzzAutomode1 extends LinearOpMode {
     private DcMotor intake = null;
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
+    private boolean firing = false;
+    private CRServo leftStopper = null;
+    private CRServo rightStopper = null;
 
     @Override
     public void runOpMode() {
@@ -30,6 +34,8 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
+        rightStopper = hardwareMap.get(CRServo.class, "RS");
+        leftStopper = hardwareMap.get(CRServo.class, "LS");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -73,15 +79,17 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         intake.setPower(intakePower);
         flywheel.setPower(flywheelPower);
 
-        autoDrive(500, 0.25, 0, 0);
+        XDriveForward(500, 0.25, 0, 0);
+
+        XDriveForward(0, 0, 0, 90);
 
     }
-    public void autoDrive(int time, double speed_x, double speed_y, double angle) {
+    public void XDriveForward(int time, double speed_x, double speed_y, double angularvelocity) {
         double max;
 
         double axial   = speed_y;
         double lateral =  speed_x;
-        double yaw     =  angle;
+        double yaw     =  angularvelocity;
 
 
         double frontLeftPower  = axial + lateral + yaw;
@@ -113,5 +121,14 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         backLeftDrive.setPower(0.0);
         backRightDrive.setPower(0.0);
 
+    }
+    public void fire() {
+        firing = true;
+        rightStopper.setPower(-1);
+        leftStopper.setPower(1);
+        sleep(Constants.STOPPER_DELAY);
+        leftStopper.setPower(-1);
+        rightStopper.setPower(1);
+        firing = false;
     }
 }
