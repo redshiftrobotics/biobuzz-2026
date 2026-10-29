@@ -81,20 +81,29 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         flywheel.setPower(flywheelPower);
 
 
-
-        double frontLeftPower  = axial + lateral + yaw;
-        double frontRightPower = axial - lateral - yaw;
-        double backLeftPower   = axial - lateral + yaw;
-        double backRightPower  = axial + lateral - yaw;
-
-
+        while(opModeIsActive()) {
+            double frontLeftPower  = PID_FL.performPID();
+            double frontRightPower = PID_FR.performPID();
+            double backLeftPower   = PID_BL.performPID();
+            double backRightPower  = PID_BR.performPID();
 
 
-        frontLeftDrive.setPower(frontLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backLeftDrive.setPower(backLeftPower);
-        backRightDrive.setPower(backRightPower);
 
+
+            frontLeftDrive.setPower(frontLeftPower);
+            frontRightDrive.setPower(frontRightPower);
+            backLeftDrive.setPower(backLeftPower);
+            backRightDrive.setPower(backRightPower);
+        }
+
+
+    }
+    public void drivePID(double angle, double dist) {
+
+        PID_FL.setSetpoint();
+        PID_FR.setSetpoint();
+        PID_BL.setSetpoint();
+        PID_BR.setSetpoint();
     }
 
 }
