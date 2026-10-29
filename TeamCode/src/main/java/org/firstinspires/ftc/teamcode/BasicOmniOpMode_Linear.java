@@ -148,7 +148,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             } else {
                 flywheelPower = 0.0;
             }
-
+            if (gamepad1.rightTriggerWasPressed()){fire();}
 
             // This is test code:
             //
