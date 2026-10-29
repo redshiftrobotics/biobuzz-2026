@@ -73,7 +73,7 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         intake.setPower(intakePower);
         flywheel.setPower(flywheelPower);
 
-        autoDrive(500, 0.25, 0, 0);
+        autoDrive(2500, -0.25, 0, 0);
 
     }
     public void autoDrive(int time, double speed_x, double speed_y, double angle) {

@@ -73,8 +73,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor backRightDrive = null;
     private DcMotor flywheel = null;
     private DcMotor intake = null;
-    private CRServo leftStopper = null;
-    private CRServo rightStopper = null;
+    private CRServo stopper = null;
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
     private boolean firing = false;
@@ -90,8 +89,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
-        rightStopper = hardwareMap.get(CRServo.class, "RS");
-        leftStopper = hardwareMap.get(CRServo.class, "LS");
+        stopper = hardwareMap.get(CRServo.class, "S");
 
 
         // ########################################################################################
@@ -123,7 +121,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x * 0.5;
+            double yaw     =  gamepad1.right_stick_x * 0.6;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -187,11 +185,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     }
     public void fire() {
         firing = true;
-        rightStopper.setPower(-1);
-        leftStopper.setPower(1);
+        stopper.setPower(-1);
         sleep(Constants.STOPPER_DELAY);
-        leftStopper.setPower(-1);
-        rightStopper.setPower(1);
+        stopper.setPower(0);
         firing = false;
     }
 }
