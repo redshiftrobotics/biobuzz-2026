@@ -21,10 +21,7 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
     //TODO make cleaner
 
-    private PIDController PID_FR = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
-    private PIDController PID_FL = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
-    private PIDController PID_BR = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
-    private PIDController PID_BL = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
+    private PIDController drivePID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
 
     @Override
     public void runOpMode() {
@@ -82,10 +79,10 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
 
         while(opModeIsActive()) {
-            double frontLeftPower  = PID_FL.performPID();
-            double frontRightPower = PID_FR.performPID();
-            double backLeftPower   = PID_BL.performPID();
-            double backRightPower  = PID_BR.performPID();
+            double frontLeftPower  = drivePID.performPID();
+            double frontRightPower = drivePID.performPID();
+            double backLeftPower   = drivePID.performPID();
+            double backRightPower  = drivePID.performPID();
 
 
 
@@ -98,12 +95,10 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
 
     }
-    public void drivePID(double angle, double dist) {
+    public void usePID(double angle, double dist) {
 
-        PID_FL.setSetpoint();
-        PID_FR.setSetpoint();
-        PID_BL.setSetpoint();
-        PID_BR.setSetpoint();
+
+        drivePID.setSetpoint();
     }
 
 }
