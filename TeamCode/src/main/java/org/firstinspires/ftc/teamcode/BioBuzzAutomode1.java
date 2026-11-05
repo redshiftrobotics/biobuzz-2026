@@ -20,8 +20,6 @@ public class BioBuzzAutomode1 extends LinearOpMode {
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
     private boolean firing = false;
-    private CRServo leftStopper = null;
-    private CRServo rightStopper = null;
 
     @Override
     public void runOpMode() {
@@ -34,8 +32,6 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "BR");
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
-        rightStopper = hardwareMap.get(CRServo.class, "RS");
-        leftStopper = hardwareMap.get(CRServo.class, "LS");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -122,13 +118,5 @@ public class BioBuzzAutomode1 extends LinearOpMode {
         backRightDrive.setPower(0.0);
 
     }
-    public void fire() {
-        firing = true;
-        rightStopper.setPower(-1);
-        leftStopper.setPower(1);
-        sleep(Constants.STOPPER_DELAY);
-        leftStopper.setPower(-1);
-        rightStopper.setPower(1);
-        firing = false;
-    }
+
 }
