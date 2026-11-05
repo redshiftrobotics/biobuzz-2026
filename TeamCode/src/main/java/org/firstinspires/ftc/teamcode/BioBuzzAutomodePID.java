@@ -17,10 +17,7 @@ public class BioBuzzAutomodePID extends LinearOpMode {
     private DcMotorEx backRightDrive = null;
     private DcMotor xEncoder = null;
     private DcMotor yEncoder = null;
-    private DcMotorEx flywheel = null;
-    private DcMotorEx intake = null;
-    private boolean flywheelEnabled = false;
-    private boolean intakeEnabled = false;
+
     double currentX = 0.0;
     double currentY = 0.0;
 
@@ -38,8 +35,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotorEx.class, "BL");
         frontRightDrive = hardwareMap.get(DcMotorEx.class, "FR");
         backRightDrive = hardwareMap.get(DcMotorEx.class, "BR");
-        flywheel = hardwareMap.get(DcMotorEx.class, "F");
-        intake = hardwareMap.get(DcMotorEx.class, "I");
         xEncoder = hardwareMap.get(DcMotor.class, "XE");
         yEncoder = hardwareMap.get(DcMotor.class, "YE");
 
@@ -59,9 +54,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
 
-        double flywheelPower = 0;
-        double intakePower = 0;
-
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -77,19 +69,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         while(opModeIsActive()) {
 
 
-            if (intakeEnabled) {
-                intakePower = Constants.INTAKE_POWER;
-            } else {
-                intakePower = 0.0;
-            }
-            if (flywheelEnabled) {
-                flywheelPower = Constants.FLYWHEEL_POWER;
-            } else {
-                flywheelPower = 0.0;
-            }
-            intake.setPower(intakePower);
-            flywheel.setPower(flywheelPower);
-
 
             setSetpoints(0.0, 15);
 
@@ -98,6 +77,9 @@ public class BioBuzzAutomodePID extends LinearOpMode {
             double lateral = drive_xPID.performPID(xEncoder.getCurrentPosition()*Constants.CM_PER_TICK);
             double yaw     = 0;
 
+            telemetry.addData("axial",axial);
+            telemetry.addData("lateral",lateral);
+            telemetry.update();
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double frontLeftPower  = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
@@ -121,6 +103,7 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
         double x_dist = dist * Math.cos(angle);
         double y_dist = dist * Math.sin(angle);
+
         drive_xPID.setSetpoint(x_dist);
         drive_yPID.setSetpoint(y_dist);
     }
