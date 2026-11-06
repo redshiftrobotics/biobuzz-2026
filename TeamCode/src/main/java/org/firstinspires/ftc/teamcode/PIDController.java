@@ -8,7 +8,7 @@ public class PIDController
     private double m_I;                                 // factor for "integral" control
     private double m_D;                                 // factor for "derivative" control
     private double m_input;                 // sensor input for pid controller
-    private double m_maximumOutput = 1.0;   // |maximum output|
+    private double m_maximumOutput = Constants.PID_MAX_SPEED;   // |maximum output|
     private double m_minimumOutput = -1.0;  // |minimum output|
     private double m_maximumInput = 9999999;    // maximum input - limit setpoint to this
     private double m_minimumInput = -9999999;    // minimum input - limit setpoint to this
