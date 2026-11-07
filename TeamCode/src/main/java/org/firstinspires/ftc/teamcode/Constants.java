@@ -11,4 +11,6 @@ public class Constants {
     public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIA*Math.PI;
     public static final double CM_PER_TICK = WHEEL_CIRCUMFERENCE * TICKS_PER_REV / 10;
     public static final double PID_MAX_SPEED = 0.25;
+    public static final double FLOWER_UP = 0.0;
+    public static final double FLOWER_DOWN = 0.0;
 }

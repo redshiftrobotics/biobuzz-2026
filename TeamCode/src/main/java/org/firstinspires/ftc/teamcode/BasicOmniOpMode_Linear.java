@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -74,9 +75,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor flywheel = null;
     private DcMotor intake = null;
     private CRServo stopper = null;
+    private Servo flowerIntake = null;
     private boolean flywheelEnabled = false;
     private boolean intakeEnabled = false;
     private boolean firing = false;
+    private boolean flowerEnabled = false;
 
     @Override
     public void runOpMode() {
@@ -90,6 +93,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         flywheel = hardwareMap.get(DcMotor.class, "F");
         intake = hardwareMap.get(DcMotor.class, "I");
         stopper = hardwareMap.get(CRServo.class, "S");
+        flowerIntake = hardwareMap.get(Servo.class, "FS");
 
 
         // ########################################################################################
@@ -130,6 +134,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double backLeftPower   = axial - lateral + yaw;
             double backRightPower  = axial + lateral - yaw;
 
+            if (gamepad1.xWasPressed()){switchFlower();}
 
             double flywheelPower = 0;
             double intakePower = 0;
@@ -189,6 +194,13 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         sleep(Constants.STOPPER_DELAY);
         stopper.setPower(0);
         firing = false;
+    }
+    public void switchFlower() {
+        if (flowerEnabled) {
+            flowerIntake.setPosition(Constants.FLOWER_UP);
+        } else {
+            flowerIntake.setPosition(Constants.FLOWER_DOWN);
+        }
     }
 }
 
