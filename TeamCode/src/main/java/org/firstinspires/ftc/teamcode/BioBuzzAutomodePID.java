@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.hardware.TimestampedData;
 
 @Autonomous(name="Move Auto PID", group="Simple Autos")
 public class BioBuzzAutomodePID extends LinearOpMode {
@@ -18,15 +18,17 @@ public class BioBuzzAutomodePID extends LinearOpMode {
     private DcMotorEx backRightDrive = null;
     private DcMotor xEncoder = null;
     private DcMotor yEncoder = null;
-    private DcMotor xEncoder2 = null;
-
+    private DcMotor yEncoder2 = null;
+    private  NavxMicroNavigationSensor nav = null;
     double currentX = 0.0;
     double currentY = 0.0;
+    double currentYaw = 0.0;
 
     //TODO make cleaner
 
     private PIDController drive_yPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_xPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
+    private PIDController drive_yawPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
 
     @Override
     public void runOpMode() {
@@ -39,7 +41,8 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotorEx.class, "BR");
         xEncoder = hardwareMap.get(DcMotor.class, "XE");
         yEncoder = hardwareMap.get(DcMotor.class, "YE");
-        xEncoder2 = hardwareMap.get(DcMotor.class, "F");
+        yEncoder2 = hardwareMap.get(DcMotor.class, "F");
+        nav = hardwareMap.get(NavxMicroNavigationSensor.class, "IMU");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -76,14 +79,19 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
             setSetpoints(0.0, -50);
 
-            currentX = xEncoder.getCurrentPosition();
-            currentY = yEncoder.getCurrentPosition();
-            double axial   = drive_yPID.performPID(currentY*Constants.CM_PER_TICK);
-            double lateral = drive_xPID.performPID(currentY*Constants.CM_PER_TICK);
-            double yaw     = 0;
+            currentX = xEncoder.getCurrentPosition()*Constants.CM_PER_TICK;
+            currentY = ((double) (yEncoder.getCurrentPosition() + yEncoder2.getCurrentPosition()) / 2)*Constants.CM_PER_TICK;
+            currentYaw = Math.abs(yEncoder.getCurrentPosition() - yEncoder2.getCurrentPosition())*Constants.CM_PER_TICK / 34.925;
+            double axial   = drive_yPID.performPID(currentY);
+            double lateral = drive_xPID.performPID(currentY);
+            double yaw     = drive_yawPID.performPID(currentYaw);
 
-            telemetry.addData("axial",axial);
-            telemetry.addData("lateral",lateral);
+            telemetry.addData("axial", axial);
+            telemetry.addData("lateral", lateral);
+            telemetry.addData("yEncoder",yEncoder.getCurrentPosition());
+            telemetry.addData("xEncoder",xEncoder.getCurrentPosition());
+            telemetry.addData("yEncoder2",yEncoder2.getCurrentPosition());
+            telemetry.addData("IMU", nav.getAngularOrientationAxes());
             telemetry.update();
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double frontLeftPower  = axial + lateral + yaw;
@@ -103,9 +111,8 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
     }
     public void setSetpoints(double angle, double dist) {
-        currentX = 0.0;
-        currentY = 0.0;
         xEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        yEncoder2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         yEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double x_dist = dist * Math.cos(angle);
@@ -113,6 +120,7 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
         drive_xPID.setSetpoint(x_dist);
         drive_yPID.setSetpoint(y_dist);
+        drive_yawPID.setSetpoint(0.0);
     }
 
 }
