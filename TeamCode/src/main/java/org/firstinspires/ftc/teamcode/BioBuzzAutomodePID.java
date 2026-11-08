@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.TimestampedData;
 
 @Autonomous(name="Move Auto PID", group="Simple Autos")
@@ -19,7 +18,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
     private DcMotor xEncoder = null;
     private DcMotor yEncoder = null;
     private DcMotor yEncoder2 = null;
-    private  NavxMicroNavigationSensor nav = null;
     double currentX = 0.0;
     double currentY = 0.0;
     double currentYaw = 0.0;
@@ -42,7 +40,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
         xEncoder = hardwareMap.get(DcMotor.class, "XE");
         yEncoder = hardwareMap.get(DcMotor.class, "YE");
         yEncoder2 = hardwareMap.get(DcMotor.class, "F");
-        nav = hardwareMap.get(NavxMicroNavigationSensor.class, "IMU");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -81,7 +78,7 @@ public class BioBuzzAutomodePID extends LinearOpMode {
 
             currentX = xEncoder.getCurrentPosition()*Constants.CM_PER_TICK;
             currentY = ((double) (yEncoder.getCurrentPosition() + yEncoder2.getCurrentPosition()) / 2)*Constants.CM_PER_TICK;
-            currentYaw = Math.abs(yEncoder.getCurrentPosition() - yEncoder2.getCurrentPosition())*Constants.CM_PER_TICK / 34.925;
+            currentYaw = 0.0;
             double axial   = drive_yPID.performPID(currentY);
             double lateral = drive_xPID.performPID(currentY);
             double yaw     = drive_yawPID.performPID(currentYaw);
@@ -91,7 +88,6 @@ public class BioBuzzAutomodePID extends LinearOpMode {
             telemetry.addData("yEncoder",yEncoder.getCurrentPosition());
             telemetry.addData("xEncoder",xEncoder.getCurrentPosition());
             telemetry.addData("yEncoder2",yEncoder2.getCurrentPosition());
-            telemetry.addData("IMU", nav.getAngularOrientationAxes());
             telemetry.update();
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double frontLeftPower  = axial + lateral + yaw;
