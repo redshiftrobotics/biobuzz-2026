@@ -22,8 +22,6 @@ public class BioBuzzAutomodeIMUPID extends LinearOpMode {
     private DcMotorEx backRightDrive = null;
     private GoBildaPinpointDriver posSensor = null;
 
-    //TODO make cleaner
-
     private PIDController drive_yPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_xPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_yawPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
