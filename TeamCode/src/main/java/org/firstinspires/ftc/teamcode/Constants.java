@@ -13,4 +13,6 @@ public class Constants {
     public static final double PID_MAX_SPEED = 0.25;
     public static final double FLOWER_UP = 0.0;
     public static final double FLOWER_DOWN = 0.0;
+    public static final double X_OFFSET = 0.0;
+    public static final double Y_OFFSET = 0.0;
 }

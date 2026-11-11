@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -83,6 +85,7 @@ public class FieldCentricTeleOp extends LinearOpMode {
     private boolean firing = false;
     private boolean flowerEnabled = false;
     private GoBildaPinpointDriver posSensor = null;
+    private Pose2D startingPos = null;
     private PIDController drive_yPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_xPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_yawPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
@@ -101,6 +104,11 @@ public class FieldCentricTeleOp extends LinearOpMode {
         stopper = hardwareMap.get(CRServo.class, "S");
         flowerIntake = hardwareMap.get(Servo.class, "FS");
         posSensor = hardwareMap.get(GoBildaPinpointDriver.class, "POS");
+
+        //pinpoint init stuff
+        posSensor.setPosition(startingPos);
+        posSensor.setOffsets(Constants.X_OFFSET, Constants.Y_OFFSET, DistanceUnit.CM);
+        posSensor.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
 
         // ########################################################################################
@@ -155,7 +163,7 @@ public class FieldCentricTeleOp extends LinearOpMode {
 //            }
 
 
-            
+
             if (gamepad1.xWasPressed()){switchFlower();}
 
             double flywheelPower = 0;
