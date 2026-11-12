@@ -109,6 +109,7 @@ public class FieldCentricTeleOp extends LinearOpMode {
         posSensor.setPosition(startingPos);
         posSensor.setOffsets(Constants.X_OFFSET, Constants.Y_OFFSET, DistanceUnit.CM);
         posSensor.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        posSensor.setEncoderDirections(Constants.XE_DIR, Constants.YE_DIR);
 
 
         // ########################################################################################

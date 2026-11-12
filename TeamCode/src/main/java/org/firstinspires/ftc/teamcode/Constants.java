@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+
 public class Constants {
     public static final double FLYWHEEL_POWER = -0.75;
     public static final double INTAKE_POWER = 1.0;
@@ -15,4 +17,6 @@ public class Constants {
     public static final double FLOWER_DOWN = 0.0;
     public static final double X_OFFSET = 0.0;
     public static final double Y_OFFSET = 0.0;
+    public static final GoBildaPinpointDriver.EncoderDirection XE_DIR = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    public static final GoBildaPinpointDriver.EncoderDirection YE_DIR = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 }

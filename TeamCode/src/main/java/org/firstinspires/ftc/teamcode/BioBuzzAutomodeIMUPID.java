@@ -26,6 +26,7 @@ public class BioBuzzAutomodeIMUPID extends LinearOpMode {
     private PIDController drive_xPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
     private PIDController drive_yawPID = new PIDController(Constants.DRIVE_PID.kP, Constants.DRIVE_PID.kI, Constants.DRIVE_PID.kD);
 
+    private Pose2D startingPos = null;
     @Override
     public void runOpMode() {
 
@@ -36,6 +37,15 @@ public class BioBuzzAutomodeIMUPID extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotorEx.class, "FR");
         backRightDrive = hardwareMap.get(DcMotorEx.class, "BR");
         posSensor = hardwareMap.get(GoBildaPinpointDriver.class, "POS");
+
+
+        //pinpoint init stuff
+        posSensor.setPosition(startingPos);
+        posSensor.setOffsets(Constants.X_OFFSET, Constants.Y_OFFSET, DistanceUnit.CM);
+        posSensor.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        posSensor.setEncoderDirections(Constants.XE_DIR, Constants.YE_DIR);
+
+
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
